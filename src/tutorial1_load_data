@@ -1,0 +1,32 @@
+#!/usr/bin/env
+
+import seaborn as sns
+import pandas as pd
+
+# Performs essentially the same function as R's gather()
+# Function borrowed from http://connor-johnson.com/2014/08/28/tidyr-and-pandas-gather-and-melt/
+def gather( df, key, value, cols ):
+    id_vars = [ col for col in df.columns if col not in cols ]
+    id_values = cols
+    var_name = key
+    value_name = value
+    return pd.melt( df, id_vars, id_values, var_name, value_name )
+
+
+data_file = open('/Users/willyutsch/Documents/College/Undergraduate/Classes/Winter 2019/BIO465/Data/trimALittleOffTheSides.txt', 'r')
+
+df_list = [] # List of dataframes in order that they are presented in original data
+line = data_file.readline()
+while line != '':
+    # If line is number data, add data to a list and copy list into a dataframe
+    list_temp = list()
+    while line != '' and line[0].isdigit():
+        line = line.strip()
+        cols = line.split()
+        list_temp.append(cols)
+        line = data_file.readline()
+    df_list.append(pd.DataFrame(list_temp))
+    while line != '' and not line[0].isdigit():
+        line = data_file.readline()
+
+data_file.close()
